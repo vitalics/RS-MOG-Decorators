@@ -1,0 +1,39 @@
+{
+  "name": "RS-MOG-Decorators",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitalics/RS-MOG-Decorators.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vitalics/RS-MOG-Decorators/issues"
+  },
+  "homepage": "https://github.com/vitalics/RS-MOG-Decorators#readme",
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/expect": "^1.20.3",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.9.4",
+    "assert": "^1.4.1",
+    "expect": "^23.5.0",
+    "mocha": "^5.2.0",
+    "mocha-typescript": "^1.1.17",
+    "ts-mocha": "^2.0.0",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "chai": "^4.1.2",
+    "di-typescript": "^1.1.4",
+    "reflect-metadata": "^0.1.12"
+  }
+}
