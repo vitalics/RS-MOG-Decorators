@@ -4,9 +4,6 @@ import { Inject as _Inject, Injector, ProvideDecorator } from 'di-typescript';
 
 const injector = new Injector();
 
-// tslint:disable-next-line:no-any
-export type epic = any;
-
 export function Injectable(): ClassDecorator {
     return (target) => {
         // freezing for outside modification (e.g. Reflect or Object)
@@ -17,9 +14,9 @@ export function Injectable(): ClassDecorator {
     };
 }
 
-export function Inject(...args: epic[]): PropertyDecorator {
+export function Inject(...args: any[]): PropertyDecorator {
     return (target, key) => {
-        let instance: epic;
+        let instance: any;
         const type = Reflect.getMetadata('design:type', target, key);
 
         if (args.length) {
