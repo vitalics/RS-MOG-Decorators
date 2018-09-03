@@ -9,6 +9,7 @@ class IOCTest {
     public checkThatInstanceCreated(): void {
 
         const instance = new ExampableTemp();
+        instance.someMethod(4);
         assert.isTrue(instance.injectableTemp instanceof InjectableTemp);
     }
 }

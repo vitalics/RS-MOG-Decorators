@@ -10,6 +10,12 @@
                 "ts-node/register",
                 "${relativeFile}"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/index.js"
         }
     ],
     "compounds": []
