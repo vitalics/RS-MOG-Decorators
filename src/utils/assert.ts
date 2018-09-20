@@ -1,12 +1,10 @@
 import { assert as _assert } from 'chai';
 
-import { epic } from './ioc';
-
 export function equal<T>(expected: T, message?: string): MethodDecorator {
-    return (target, key, descriptor: TypedPropertyDescriptor<epic>) => {
+    return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
         const oldDescriptor = descriptor.value as Function;
 
-        descriptor.value = function (...args: epic[]): T {
+        descriptor.value = function (...args: any[]): T {
             const result = oldDescriptor.apply(this, args) as T;
             _assert.equal(result, expected, message);
             return result;
@@ -16,10 +14,10 @@ export function equal<T>(expected: T, message?: string): MethodDecorator {
 }
 
 export function ok<T>(message?: string): MethodDecorator {
-    return (target, key, descriptor: TypedPropertyDescriptor<epic>) => {
+    return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
         const oldDescriptor = descriptor.value as Function;
 
-        descriptor.value = function (...args: epic[]): T {
+        descriptor.value = function (...args: any[]): T {
             const result = oldDescriptor.apply(this, args) as T;
             _assert.ok(result, message);
             return result;
@@ -27,11 +25,11 @@ export function ok<T>(message?: string): MethodDecorator {
         return descriptor;
     };
 }
-export function isTrue(message?: string): epic {
-    return (target, key, descriptor: TypedPropertyDescriptor<epic>) => {
+export function isTrue(message?: string): any {
+    return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
         const oldDescriptor = descriptor.value as Function;
 
-        descriptor.value = function (...args: epic[]): boolean {
+        descriptor.value = function (...args: any[]): boolean {
             const result = oldDescriptor.apply(this, args) as boolean;
             _assert.isTrue(result, message);
             return result;
