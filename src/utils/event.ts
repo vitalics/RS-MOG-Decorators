@@ -1,68 +1,82 @@
 import 'reflect-metadata';
 
-import { EventEmitter as _EventEmitter } from 'events';
+import { EventEmitter as _EventEmitter, EventEmitter } from 'events';
+import { MyEventEmitter } from '../examples/oop.eventemitter.listen';
 
 interface Listenable {
-    method: (...args: any[]) => void;
-    eventName: string;
+  method: (...args: any[]) => void;
+  eventName: string;
 }
-type Onable = Listenable;
-type Oncable = Listenable;
+const REESTER = {
+  onable: 'onableReester',
+}
 
 export function on(event: string): MethodDecorator {
-    return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
-        const oldDescriptor = descriptor.value as (...args: any[]) => void;
+  return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
+    const oldDescriptor = descriptor.value as (...args: any[]) => void;
 
-        const reester: Onable[] = Reflect.getMetadata(
-            'onableReester',
-            target.constructor
-        ) || [];
+    const reester: Listenable[] =
+      Reflect.getMetadata(REESTER.onable, target.constructor) || [];
+    reester.push({
+      method: oldDescriptor, eventName: event,
+    });
+    Reflect.defineMetadata(REESTER.onable, reester, target.constructor);
 
-        reester.push({
-            method: oldDescriptor,
-            eventName: event,
-        });
-
-        Reflect.defineMetadata('onableReester', reester, target.constructor);
-
-        return descriptor;
-    };
+    return descriptor;
+  };
 }
 
 export function once(event: string): MethodDecorator {
-    return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
-        const oldDescriptor = descriptor.value as (...args: any[]) => void;
+  return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
+    const oldDescriptor = descriptor.value as (...args: any[]) => void;
 
-        const reester: Onable[] = Reflect.getMetadata(
-            'oncableReester',
-            target.constructor
-        ) || [];
+    const reester: Listenable[] = Reflect.getMetadata(
+      'oncableReester',
+      target.constructor
+    ) || [];
 
-        reester.push({
-            method: oldDescriptor,
-            eventName: event,
-        });
+    reester.push({
+      method: oldDescriptor,
+      eventName: event,
+    });
 
-        Reflect.defineMetadata('oncableReester', reester, target.constructor);
+    Reflect.defineMetadata('oncableReester', reester, target.constructor);
 
-        return descriptor;
-    };
+    return descriptor;
+  };
 }
 
-export function EventEmitter(): ClassDecorator {
-    return target => {
-        return new Proxy(target, {
-            construct: (newTarget, args) => {
-                const instance = Reflect.construct(newTarget, args) as _EventEmitter;
+export function Eventable(): ClassDecorator {
+  return target => {
+    return new Proxy(target, {
+      construct: (newTarget, args) => {
+        const instance = Reflect.construct(newTarget, args);
 
-                const onaleReester: Onable[] = Reflect.getMetadata('onableReester', target) || [];
-                const oncableReester: Oncable[] = Reflect.getMetadata('oncableReester', target) || [];
+        const onaleReester: Listenable[] =
+          Reflect.getMetadata(REESTER.onable, target) || [];
 
-                onaleReester.forEach(e => instance.on(e.eventName, e.method));
-                oncableReester.forEach(e => instance.once(e.eventName, e.method));
+        onaleReester.forEach(e => instance.on(e.eventName, e.method));
 
-                return instance;
-            },
-        });
-    };
+        Reflect.defineMetadata('instance', instance, target, 'a');
+
+        return instance;
+      },
+    });
+  };
 }
+
+export function listen(): PropertyDecorator {
+  let isFirstCall = true;
+  return (target, key) => {
+    let value = target[key];
+
+    Reflect.defineProperty(target, key, {
+      get: () => value,
+      set: (newValue: any) => {
+        !isFirstCall ?
+          console.log('change property to ' + newValue) :
+          isFirstCall = !isFirstCall;
+
+        value = newValue;
+      },
+    })};}

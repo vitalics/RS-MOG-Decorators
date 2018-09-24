@@ -1,52 +1,35 @@
+function pre<T>(...fns: ((...args: any[]) => void)[]): MethodDecorator {
+  return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
+    const oldDescriptor = descriptor.value as Function;
+    descriptor.value = function wrapper(...args: any[]): T {
+      fns.forEach(fn => fn.call(this));
 
-import { EventEmitter as _EventEmitter } from 'events';
-
-import { Inject, Injectable, post, pre } from '../utils';
-// import { EventEmitter, on, once } from '../utils/event';
-
-@Injectable()
-export class InjectableTemp {
-    public someProp: number = 4;
-    public constructor(public msg?: string) {
-        console.dir(this);
+      const result = oldDescriptor.apply(this, args) as T;
+      return result;
     }
+  }
 }
 
-@Injectable()
-export class ExampableTemp {
-    @Inject() public injectableTemp: InjectableTemp;
+function post<T>(...fns: ((...args: any[]) => void)[]): MethodDecorator {
+  return (target, key, descriptor: TypedPropertyDescriptor<any>) => {
+    const oldDescriptor = descriptor.value as Function;
+    descriptor.value = function wrapper(...args: any[]): T {
+      const result = oldDescriptor.apply(this, args) as T;
 
-    @post(
-        (b: number) => console.dir('====hello from post hook==== ' + b),
-        (c: number) => console.dir('====hello from post hook==== ' + c)
-    )
-    @pre(() => console.dir('====hello from pre hook===='))
-    public someMethod(num: number): number {
-        console.dir('some method');
-        return num;
+      fns.forEach(fn => fn.call(this));
+      return result;
     }
+  }
 }
 
-// @EventEmitter()
-// class MyEventEmitter extends _EventEmitter {
+class DecoratorsDemo {
+  @post(() => console.log('= post hook ='))
+  @pre(() => console.log('= pre hook ='))
+  public callMe() {
+    console.log('method call');
+    return 3;
+  }
+}
 
-//     @once('data')
-//     public myLogic(a: number): void {
-//         console.dir('emitter logic with args ' + a);
-//     }
+console.log(new DecoratorsDemo().callMe() === 3)
 
-//     @once('data')
-//     public anotherEvent(): void {
-//         console.dir('another emitter');
-//     }
-
-//     @on('data')
-//     public someMethod(): void {
-//         console.dir('some method');
-//     }
-// }
-
-// const eventEmitter = new MyEventEmitter();
-
-// eventEmitter.emit('data', 2);
-// eventEmitter.emit('data', 2);
